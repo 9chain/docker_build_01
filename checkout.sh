@@ -4,9 +4,9 @@ set -e
 ROOT_DIR=`pwd`
 download_nbcapid() {
     cd $ROOT_DIR
-    test -d nbcapid && return 
-    mkdir nbcapid
-    cd nbcapid && git clone https://github.com/9chain/nbcapid.git src/github.com/9chain/nbcapid/
+    test -d nbcapid/src/gitlab.com/tenbayblockchain/nbcapid && return 
+    #mkdir nbcapid
+    cd nbcapid && git clone https://gitlab.com/tenbayblockchain/nbcapid.git src/gitlab.com/tenbayblockchain/nbcapid
 }
 
 download_sdksrvd() {
@@ -19,7 +19,7 @@ download_sdksrvd() {
 pull_nbcapid() {
     cd $ROOT_DIR
     test -d nbcapid || exit 1
-    cd nbcapid/src/github.com/9chain/nbcapid/ 
+    cd nbcapid/src/gitlab.com/tenbayblockchain/nbcapid
     git pull 
 }
 

@@ -1,13 +1,13 @@
 include rules.mk 
-TARGET_DIR=$(INSTALL_DIR)/nbcapid
+TARGET_DIR=$(INSTALL_DIR)/nbcapid/target/
 
 all: nbcapid 
 
 nbcapid: 
-	make -C src/github.com/9chain/nbcapid
+	make -C src/gitlab.com/tenbayblockchain/nbcapid
 
 install:
 	rm -rf $(TARGET_DIR)
 	mkdir -p $(TARGET_DIR)
-	cp bin/nbcapid $(TARGET_DIR)/
-	cp -r src/github.com/9chain/nbcapid/cfg $(TARGET_DIR)/
+	cp src/gitlab.com/tenbayblockchain/nbcapid/nbcapid $(TARGET_DIR)/
+	cp -r src/gitlab.com/tenbayblockchain/nbcapid/cfg $(TARGET_DIR)/
