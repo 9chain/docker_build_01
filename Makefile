@@ -1,31 +1,37 @@
 include rules.mk
+TARGET_NBCAPID=$(TARGET_DIR)/nbcapid
+TARGET_GOSDKSRVD=$(TARGET_DIR)/gosdksrvd
 
-all: nbcapi sdksrv
-
-install: nbcapi-install sdksrv-install 
-
-image: sdksrv-image apisrv-image
+all: nbcapi gosdksrv
+install: nbcapi-install gosdksrv-install 
+image: gosdksrv-image nbcapi-image
+push: gosdksrv-push nbcapi-push 
 
 nbcapi: 
-	make -C nbcapid
-sdksrv: 
-	make -C sdksrvd/sdksrvd
+	cd gopath/src/gitlab.com/tenbayblockchain/nbcapid && go install 
+
+gosdksrv: 
+	cd gopath/src/gitlab.com/tenbayblockchain/gosdksrvd && go install 
 
 nbcapi-install:
-	mkdir -p $(TARGET_DIR)
-	make -C nbcapid install INSTALL_DIR=$(TARGET_DIR)
+	if [ -e $(TARGET_NBCAPID) ]; then rm -rf $(TARGET_NBCAPID); fi 
+	mkdir -p $(TARGET_NBCAPID)/
+	cp gopath/bin/nbcapid $(TARGET_NBCAPID)/
+	cd gopath/src/gitlab.com/tenbayblockchain/nbcapid && cp cfg docker/* $(TARGET_NBCAPID)/ -r
 
-sdksrv-install:
-	mkdir -p $(TARGET_DIR)
-	make -C sdksrvd/sdksrvd install INSTALL_DIR=$(TARGET_DIR)
+gosdksrv-install:
+	if [ -e $(TARGET_GOSDKSRVD) ]; then rm -rf $(TARGET_GOSDKSRVD); fi 
+	mkdir -p $(TARGET_GOSDKSRVD)
+	cp gopath/bin/gosdksrvd $(TARGET_GOSDKSRVD)
+	cd gopath/src/gitlab.com/tenbayblockchain/gosdksrvd && cp cfg docker/* $(TARGET_GOSDKSRVD)/ -r
 
-# apisrv-image:
-# 	cd $(TARGET_DIR) && docker build . -t $(REGISTRY)/apisrv:$(TAG_VERSION)
+gosdksrv-image:
+	cd $(TARGET_GOSDKSRVD) && docker build . -t $(REGISTRY)/gosdksrvd:$(TAG_VERSION)
 
-sdksrv-image:
-	cp -r docker/sdksrvd/* $(TARGET_DIR)/sdksrvd/
-	cd $(TARGET_DIR)/sdksrvd/ && docker build . -t $(REGISTRY)/sdksrvd:$(TAG_VERSION)
+nbcapi-image:
+	cd $(TARGET_NBCAPID) && docker build . -t $(REGISTRY)/nbcapid:$(TAG_VERSION)
 
-apisrv-image:
-	cp -r docker/nbcapid/* $(TARGET_DIR)/nbcapid/
-	cd $(TARGET_DIR)/nbcapid/ && docker build . -t $(REGISTRY)/nbcapid:$(TAG_VERSION)
+gosdksrv-push:
+	docker push $(REGISTRY)/gosdksrvd:$(TAG_VERSION)
+nbcapi-push:
+	docker push $(REGISTRY)/nbcapid:$(TAG_VERSION)
