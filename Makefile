@@ -21,9 +21,10 @@ nbcapi-install:
 
 gosdksrv-install:
 	if [ -e $(TARGET_GOSDKSRVD) ]; then rm -rf $(TARGET_GOSDKSRVD); fi 
-	mkdir -p $(TARGET_GOSDKSRVD)
+	mkdir -p $(TARGET_GOSDKSRVD)/files 
 	cp gopath/bin/gosdksrvd $(TARGET_GOSDKSRVD)
-	cd gopath/src/gitlab.com/tenbayblockchain/gosdksrvd && cp cfg docker/* $(TARGET_GOSDKSRVD)/ -r
+	cd gopath/src/gitlab.com/tenbayblockchain/gosdksrvd && cp cfg docker/* recover $(TARGET_GOSDKSRVD)/ -r
+	cd gopath/src/gitlab.com/tenbayblockchain/gosdksrvd && cp cfg recover $(TARGET_GOSDKSRVD)/files -r
 
 gosdksrv-image:
 	cd $(TARGET_GOSDKSRVD) && docker build . -t $(REGISTRY)/gosdksrvd:$(TAG_VERSION)
