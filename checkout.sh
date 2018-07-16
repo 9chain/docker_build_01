@@ -62,7 +62,38 @@ pull_gosdksrvd() {
         dep_ensure_gosdksrvd
     }
 }
+##########################################################################################
 
+EXPLOERE_DIR=$GOPATH/src/github.com/helloshiki/blockchain-explorer
+npm_install_explorer() {
+    cd $EXPLOERE_DIR
+    npm install 
+    cd client 
+    npm install 
+}
+
+clone_explorer() {
+    local opt=$1
+    cd $ROOT_DIR
+    test -d $EXPLOERE_DIR || {
+        cd $GOPATH
+        git clone https://github.com/helloshiki/blockchain-explorer.git src/github.com/helloshiki/blockchain-explorer
+        test "$opt" = "-n" &&  return
+        npm_install_explorer
+    }
+}
+
+pull_explorer() {
+    local opt=$1
+    echo $opt 
+    cd $ROOT_DIR
+    test -d $EXPLOERE_DIR && {
+        cd $EXPLOERE_DIR
+        git pull 
+        test "$opt" = "-n" &&  return
+        npm_install_explorer
+    }
+}
 ##########################################################################################
 test -e $GOPATH || mkdir -p $GOPATH
 
@@ -82,7 +113,11 @@ clone_gosdksrvd)
 pull_nbcapid)
     pull_nbcapid ;;
 pull_gosdksrvd)
-    pull_gosdksrvd ;;           
+    pull_gosdksrvd ;;   
+pull_explorer)
+    pull_explorer $2;;        
+clone_explorer)
+    clone_explorer $2;;    
 *)
     echo "$0 clone|pull|clone_nbcapid|clone_gosdksrvd|pull_nbcapid|pull_gosdksrvd"
 esac
